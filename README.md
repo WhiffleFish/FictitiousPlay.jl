@@ -1,2 +1,1 @@
 # FictitiousPlay.jl
-# FictitiousPlay.jl

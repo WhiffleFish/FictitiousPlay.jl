@@ -1,0 +1,10 @@
+name = "FictitiousPlay"
+uuid = "85cfefb4-da36-4fd5-a940-62c4cfb2e80c"
+authors = ["WhiffleFish <tylertronics@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+DiscreteValueIteration = "4b033969-44f6-5439-a48b-c11fa3648068"
+POMDPTools = "7588e00f-9cae-40de-98dc-e0c70c48cdd7"
+POMDPs = "a93abf59-7444-517b-a68a-c42f96afdd7d"
+POMGs = "d061fddc-c47a-4172-865e-fdb23de1c5fa"
