@@ -3,8 +3,14 @@ function policy(arr::Matrix, s_idx::Int)
     return σ ./= sum(σ)
 end
 
-function SparseTabularMDP(game::SparseTabularMG, policy_player, policy)
+POMDPTools.SparseTabularMDP(game::POMG, policy_player, policy) = POMDPTools.SparseTabularMDP(POMGs.SparseTabularMG(game), policy_player, policy)
+
+function POMDPTools.SparseTabularMDP(game::SparseTabularMG, policy_player, policy)
     T = mdp_transitions(game, policy_player, policy)
+    R = mdp_reward(game, policy_player, policy)
+    b0 = vectorized_initialstate(game)
+    terminal_states = vectorized_terminal(game)
+    return POMDPTools.SparseTabularMDP(T, R, b0, terminal_states, discount(game))
 end
 
 function mdp_transitions(game, policy_player, policy)
@@ -38,15 +44,25 @@ function fill_transitions!(game, Ta, a_i, policy_player, σ_mat)
     return Ta
 end
 
-function reward(game, policy_player, σ_mat)
+function mdp_reward(game, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
     A_i = A[POMGs.other_player(policy_player)]
+    @show A_i
     R = zeros(length(S), length(A_i))
     return fill_reward!(game, R, policy_player, σ_mat) 
 end
 
-function fill_reward!(game, R, policy_player, σ_mat)
+function vectorized_initialstate(game::SparseTabularGame)
+    return game.initialstate
+end
+
+function vectorized_terminal(game::SparseTabularGame)
+    nzind, nzval = findnz(game.isterminal)
+    return Set(nzind)
+end
+
+function fill_reward!(game::SparseTabularGame, R, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
     A_i = A[POMGs.other_player(policy_player)]
@@ -55,9 +71,11 @@ function fill_reward!(game, R, policy_player, σ_mat)
         σ_ni = policy(σ_mat, s)
         for a_i ∈ A_i
             if isone(policy_player)
-                @views R[s, a_i] = dot(game.R[s, :, a_i], σ_ni)
+                v = dot(game.R[s, :, a_i], σ_ni)
+                @show size(R)
+                R[s, a_i] = v
             else
-                @views R[s, a_i] = dot(game.R[s, a_i, :], σ_ni)
+                R[s, a_i] = dot(game.R[s, a_i, :], σ_ni)
             end
         end
     end
