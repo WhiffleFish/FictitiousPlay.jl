@@ -1,5 +1,7 @@
 module FictitiousPlay
 
-greet() = print("Hello World!")
+include("mdp.jl")
+
+include("play.jl")
 
 end # module FictitiousPlay
