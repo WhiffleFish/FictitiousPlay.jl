@@ -20,4 +20,4 @@ function player_action(pol::FictitiousPlayPolicy, p, s)
     return rand(player_policy(pol, p, s))
 end
 
-actions(pol::FictitiousPlayPolicy, s) = rand.(policies(pol, s))
+joint_action(pol::FictitiousPlayPolicy, s) = rand.(policies(pol, s))
