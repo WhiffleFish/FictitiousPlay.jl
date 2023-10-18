@@ -12,4 +12,7 @@ include("mdp.jl")
 include("solve.jl")
 export FictitiousPlaySolver
 
+include("policy.jl")
+export FictitiousPlayPolicy
+
 end # module FictitiousPlay
