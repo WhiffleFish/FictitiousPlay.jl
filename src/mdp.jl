@@ -48,7 +48,6 @@ function mdp_reward(game, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
     A_i = A[POMGs.other_player(policy_player)]
-    @show A_i
     R = zeros(length(S), length(A_i))
     return fill_reward!(game, R, policy_player, σ_mat) 
 end
@@ -70,9 +69,9 @@ function fill_reward!(game::SparseTabularGame, R, policy_player, σ_mat)
         # TODO: check terminal
         σ_ni = policy(σ_mat, s)
         for a_i ∈ A_i
+            # TODO: use views
             if isone(policy_player)
                 v = dot(game.R[s, :, a_i], σ_ni)
-                @show size(R)
                 R[s, a_i] = v
             else
                 R[s, a_i] = dot(game.R[s, a_i, :], σ_ni)
