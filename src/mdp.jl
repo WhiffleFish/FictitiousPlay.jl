@@ -71,7 +71,7 @@ function fill_reward!(game::SparseTabularGame, R, policy_player, σ_mat)
         for a_i ∈ A_i
             # TODO: use views
             if isone(policy_player)
-                v = dot(game.R[s, :, a_i], σ_ni)
+                v = -dot(game.R[s, :, a_i], σ_ni)
                 R[s, a_i] = v
             else
                 R[s, a_i] = dot(game.R[s, a_i, :], σ_ni)
