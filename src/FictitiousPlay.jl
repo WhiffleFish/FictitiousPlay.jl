@@ -15,4 +15,7 @@ export FictitiousPlaySolver
 include("policy.jl")
 export FictitiousPlayPolicy
 
+include("value.jl")
+export policy_value
+
 end # module FictitiousPlay
