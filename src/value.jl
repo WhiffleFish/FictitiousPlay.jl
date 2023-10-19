@@ -5,6 +5,7 @@ Base.@kwdef struct PolicyEvaluator
 end
 
 function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::SparseTabularGame)
+    # TODO: assert that policy is normed already
     V = zeros(length(states(game)))
     γ = discount(game)
     A1, A2 = actions(game)
