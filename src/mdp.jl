@@ -37,7 +37,7 @@ function fill_transitions!(game, Ta, a_i, policy_player, σ_mat)
             for a_ni ∈ A_ni
                 a = isone(policy_player) ? (a_ni, a_i) : (a_i, a_ni)
                 # game.T[a1, a2][sp, s]
-                Ta[s,:] .+= σ_ni[a_ni] .* game.T[a...][:, s]
+                @views Ta[s,:] .+= σ_ni[a_ni] .* game.T[a...][:, s]
             end
         end
     end

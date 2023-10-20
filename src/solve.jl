@@ -14,9 +14,10 @@ function POMDPs.solve(sol::FictitiousPlaySolver, game)
     policy_cache = (zeros(Int, length(S)), zeros(Int, length(S)))
     for i ∈ 1:sol.iter
         for p ∈ 1:2
+            # TODO: make MDP conversion faster - leverage allocations made by the previous mdp conversion
             mdp = POMDPTools.SparseTabularMDP(sparse_game, p, policy_totals[p])
             vi_policy = solve(sol.vi_solver, mdp)
-            copyto!(policy_cache[p], vi_policy.policy)
+            copyto!(policy_cache[POMGs.other_player(p)], vi_policy.policy)
         end
         for p ∈ 1:2
             update_policy!(policy_totals[p], policy_cache[p])
