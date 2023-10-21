@@ -7,6 +7,8 @@ using POMGs
 import POMDPs
 import POMDPTools
 
+include("sparse_tools.jl")
+
 include("mdp.jl")
 
 include("solve.jl")
