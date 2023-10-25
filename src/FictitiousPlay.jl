@@ -6,6 +6,7 @@ using DiscreteValueIteration
 using POMGs
 import POMDPs
 import POMDPTools
+using ProgressMeter
 
 include("sparse_tools.jl")
 

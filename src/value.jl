@@ -1,10 +1,16 @@
 Base.@kwdef struct PolicyEvaluator
-    iter::Int = 100
-    bel_res::Float64 = 1e-3
-    max_time::Float64 = Inf
+    iter::Int           = 100
+    bel_res::Float64    = 1e-3
+    max_time::Float64   = Inf
+    verbose::Bool       = false
 end
 
-function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::SparseTabularGame)
+PolicyEvaluator(sol::FictitiousPlaySolver; kwargs...) = PolicyEvaluator(;iter=sol.iter, verbose=sol.verbose, kwargs...)
+
+policy_value(eval::PolicyEvaluator, pol::FictitiousPlayPolicy, game) = policy_value(eval, pol.policy_mats, game)
+
+function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::Game)
+    game = SparseTabularMG(game)
     # TODO: assert that policy is normed already
     V = zeros(length(states(game)))
     γ = discount(game)
@@ -12,6 +18,7 @@ function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::SparseTab
     iter = 0
     t0 = time()
     
+    prog = Progress(eval.iter; enabled=eval.verbose)
     while iter < eval.iter && time() - t0 < eval.max_time
         for s ∈ eachindex(V)
             for a1 ∈ A1
@@ -24,6 +31,8 @@ function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::SparseTab
             end
         end
         iter += 1
+        next!(prog)
     end
+    finish!(prog)
     return V
 end
