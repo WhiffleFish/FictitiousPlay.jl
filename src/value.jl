@@ -13,6 +13,7 @@ function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::Game)
     game = SparseTabularMG(game)
     # TODO: assert that policy is normed already
     V = zeros(length(states(game)))
+    Vp = zeros(length(states(game)))
     γ = discount(game)
     A1, A2 = actions(game)
     iter = 0
@@ -26,10 +27,11 @@ function policy_value(eval::PolicyEvaluator, policy_mats::Tuple, game::Game)
                 for a2 ∈ A2
                     π2 = policy_mats[2][s, a2]
                     # T[a1, a2][sp, s]
-                    V[s] = π1*π2*(game.R[s, a1, a2] + γ * dot(@view(game.T[a1, a2][:, s]), V)) 
+                    Vp[s] = π1*π2*(game.R[s, a1, a2] + γ * dot(@view(game.T[a1, a2][:, s]), V)) 
                 end
             end
         end
+        copyto!(V, Vp)
         iter += 1
         next!(prog)
     end
