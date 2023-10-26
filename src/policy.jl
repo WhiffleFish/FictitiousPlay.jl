@@ -7,9 +7,9 @@ end
 
 function player_policy(pol::FictitiousPlayPolicy, p, s)
     pol_mat = pol.policy_mats[p]
-    s_idx = stateindex(pol.game, s)
+    s_idx = POMDPs.stateindex(pol.game, s)
     σ = policy(pol_mat, s_idx)
-    return POMDPTools.SparseCat(σ, pol.action_map)
+    return POMDPTools.SparseCat(pol.action_map[p], σ)
 end
 
 function policies(pol::FictitiousPlayPolicy, s)
