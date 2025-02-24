@@ -1,6 +1,8 @@
 using FictitiousPlay
-using POMGs
-using POMGs.Games
+using MarkovGames
+using MarkovGames.Games
+using POMDPTools
+using Test
 
 @testset "smoke" begin
     game = CompetitiveTiger()

@@ -3,7 +3,7 @@ module FictitiousPlay
 using LinearAlgebra
 using SparseArrays
 using DiscreteValueIteration
-using POMGs
+using MarkovGames
 import POMDPs
 import POMDPTools
 using ProgressMeter

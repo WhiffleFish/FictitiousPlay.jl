@@ -3,7 +3,9 @@ function policy(arr::Matrix, s_idx::Int)
     return σ ./= sum(σ)
 end
 
-POMDPTools.SparseTabularMDP(game::POMG, policy_player, policy) = POMDPTools.SparseTabularMDP(POMGs.SparseTabularMG(game), policy_player, policy)
+POMDPTools.SparseTabularMDP(game::POMG, policy_player, policy) = POMDPTools.SparseTabularMDP(
+    MarkovGames.SparseTabularMG(game), policy_player, policy
+)
 
 function POMDPTools.SparseTabularMDP(game::SparseTabularMG, policy_player, policy)
     T = mdp_transitions(game, policy_player, policy)
@@ -16,7 +18,7 @@ end
 function mdp_transitions(game, policy_player, policy)
     S = states(game)
     A = actions(game)
-    A_i = A[POMGs.other_player(policy_player)]
+    A_i = A[MarkovGames.other_player(policy_player)]
     T = [zeros(S, S) for _ in A_i] # T[a][s, sp]
     for (a,Ta) in enumerate(T)
         fill_transitions!(game, Ta, a, policy_player, policy)
@@ -48,7 +50,7 @@ end
 function mdp_reward(game, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
-    A_i = A[POMGs.other_player(policy_player)]
+    A_i = A[MarkovGames.other_player(policy_player)]
     R = zeros(length(S), length(A_i))
     return fill_reward!(game, R, policy_player, σ_mat) 
 end
@@ -65,7 +67,7 @@ end
 function fill_reward!(game::SparseTabularGame, R, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
-    A_i = A[POMGs.other_player(policy_player)]
+    A_i = A[MarkovGames.other_player(policy_player)]
     for s ∈ S
         # TODO: check terminal
         σ_ni = policy(σ_mat, s)
