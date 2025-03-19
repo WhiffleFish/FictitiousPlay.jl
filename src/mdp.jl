@@ -16,35 +16,44 @@ function POMDPTools.SparseTabularMDP(game::SparseTabularMG, policy_player, polic
 end
 
 function mdp_transitions(game, policy_player, policy)
-    S = states(game)
-    A = actions(game)
-    A_i = A[MarkovGames.other_player(policy_player)]
-    T = [zeros(S, S) for _ in A_i] # T[a][s, sp]
-    for (a,Ta) in enumerate(T)
-        fill_transitions!(game, Ta, a, policy_player, policy)
+    A_i = actions(game)[MarkovGames.other_player(policy_player)]
+    return map(A_i) do a
+        fill_transitions!(game, a, policy_player, policy)
     end
-    return T
 end
 
-function fill_transitions!(game, Ta, a_i, policy_player, σ_mat)
+function fill_transitions!(game, a_i, policy_player, σ_mat)
     S = states(game)
     A = actions(game)
+    ns = length(S)
+    transmat_row = Int64[]
+    transmat_col = Int64[]
+    transmat_data = Float64[]
     A_ni = A[policy_player]
-    Ta .= 0.0
-    for s ∈ S
+
+    for (s_idx, s) ∈ enumerate(S)
         if isterminal(game, s)
-            Ta[s,s] = 1.0
+            push!(transmat_row, s_idx)
+            push!(transmat_col, s_idx)
+            push!(transmat_data, 1.0)
         else
             σ_ni = policy(σ_mat, s)
-            for a_ni ∈ A_ni
+            Tsa = spzeros(ns)
+            for (a_ni, σ_ni_a) ∈ zip(A_ni, σ_ni)
                 a = isone(policy_player) ? (a_ni, a_i) : (a_i, a_ni)
-                # game.T[a1, a2][sp, s]
-                sparse_col_muladd!(@view(Ta[s,:]), σ_ni[a_ni], game.T[a...], s)
-                # @views Ta[s,:] .+= σ_ni[a_ni] .* game.T[a...][:, s]
+                T = transition(game, s, a) # MUST be sparsecat, bc it's coming from SparseTabularMG
+                Tsa += SparseVector(ns, Array(T.vals), σ_ni_a .* T.probs)
+                # Tsa += sparsevec(T.vals, σ_ni_a .* T.probs, ns)
+            end
+            for (sp_idx, p) ∈ zip(Tsa.nzind, Tsa.nzval)
+                push!(transmat_row, sp_idx)
+                push!(transmat_col, s_idx)
+                push!(transmat_data, p)
             end
         end
     end
-    return Ta
+    # FIXME: this is fuckin trash lmao
+    return sparse(sparse(transmat_row, transmat_col, transmat_data, ns, ns)')
 end
 
 function mdp_reward(game, policy_player, σ_mat)

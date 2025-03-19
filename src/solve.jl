@@ -6,7 +6,7 @@ Base.@kwdef struct FictitiousPlaySolver{VI}
 end
 
 # Currently have policy cache for simultaneous updates
-function POMDPs.solve(sol::FictitiousPlaySolver, game)
+function POMDPs.solve(sol::FictitiousPlaySolver, game::MG)
     sparse_game = SparseTabularMG(game)
     S = states(sparse_game)
     A1, A2 = actions(sparse_game)
@@ -15,9 +15,11 @@ function POMDPs.solve(sol::FictitiousPlaySolver, game)
     prog = Progress(sol.iter; enabled=sol.verbose)
     for i ∈ 1:sol.iter
         for p ∈ 1:2
+            # @info "Sparse Tabular"
             # TODO: make MDP conversion faster - leverage allocations made by the previous mdp conversion
             mdp = POMDPTools.SparseTabularMDP(sparse_game, p, policy_totals[p])
             # TODO: populate init_util for vi_solver, near convergence utilities don't change much
+            # @info "Value Iteration"
             vi_policy = solve(sol.vi_solver, mdp)
             copyto!(policy_cache[MarkovGames.other_player(p)], vi_policy.policy)
         end
