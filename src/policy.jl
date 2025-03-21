@@ -5,6 +5,22 @@ struct FictitiousPlayPolicy{G,A}
     normed::Bool
 end
 
+function clean_policy!(mat::AbstractMatrix, thresh = minimum(mat)+eps())
+    mat[mat .≤ thresh] .= 0
+    foreach(eachrow(mat)) do row
+        normalize!(row, 1)
+    end
+    return mat
+end
+
+clean_policy!(pol::FictitiousPlayPolicy) = foreach(pol.policy_mats) do mat
+    clean_policy!(mat)
+end
+
+clean_policy!(pol::FictitiousPlayPolicy, thresh) = foreach(pol.policy_mats) do mat
+    clean_policy!(mat, thresh)
+end
+
 function player_policy(pol::FictitiousPlayPolicy, p, s)
     pol_mat = pol.policy_mats[p]
     s_idx = POMDPs.stateindex(pol.game, s)
