@@ -6,7 +6,7 @@ Base.@kwdef struct FictitiousPlaySolver{VI}
 end
 
 # Currently have policy cache for simultaneous updates
-function POMDPs.solve(sol::FictitiousPlaySolver, game::MG)
+function MarkovGames.solve(sol::FictitiousPlaySolver, game::MG)
     sparse_game = SparseTabularMG(game)
     S = states(sparse_game)
     A1, A2 = actions(sparse_game)
