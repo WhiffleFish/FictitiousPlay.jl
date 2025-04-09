@@ -1,4 +1,4 @@
-struct FictitiousPlayPolicy{G,A}
+struct FictitiousPlayPolicy{G,A} <: Policy
     policy_mats::NTuple{2, Matrix{Float64}}
     game::G
     action_map::A
@@ -37,3 +37,5 @@ function player_action(pol::FictitiousPlayPolicy, p, s)
 end
 
 joint_action(pol::FictitiousPlayPolicy, s) = rand.(policies(pol, s))
+
+MarkovGames.behavior(pol::FictitiousPlayPolicy, s) = ProductDistribution(policies(pol, s))
