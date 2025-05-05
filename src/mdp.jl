@@ -7,18 +7,24 @@ POMDPTools.SparseTabularMDP(game::POMG, policy_player, policy) = POMDPTools.Spar
     MarkovGames.SparseTabularMG(game), policy_player, policy
 )
 
-function POMDPTools.SparseTabularMDP(game::SparseTabularMG, policy_player, policy)
-    T = mdp_transitions(game, policy_player, policy)
+function POMDPTools.SparseTabularMDP(game::SparseTabularMG, policy_player, policy; threaded=false)
+    T = mdp_transitions(game, policy_player, policy; threaded)
     R = mdp_reward(game, policy_player, policy)
     b0 = vectorized_initialstate(game)
     terminal_states = vectorized_terminal(game)
     return POMDPTools.SparseTabularMDP(T, R, b0, terminal_states, discount(game))
 end
 
-function mdp_transitions(game, policy_player, policy)
+function mdp_transitions(game, policy_player, policy; threaded=false)
     A_i = actions(game)[MarkovGames.other_player(policy_player)]
-    return map(A_i) do a
-        fill_transitions!(game, a, policy_player, policy)
+    return if threaded
+        tmap(A_i) do a
+            fill_transitions!(game, a, policy_player, policy)
+        end
+    else
+        map(A_i) do a
+            fill_transitions!(game, a, policy_player, policy)
+        end
     end
 end
 

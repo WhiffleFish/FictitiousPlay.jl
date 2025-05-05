@@ -7,6 +7,8 @@ using MarkovGames
 import POMDPs
 import POMDPTools
 using ProgressMeter
+using OhMyThreads
+using Base.Threads
 
 include("sparse_tools.jl")
 

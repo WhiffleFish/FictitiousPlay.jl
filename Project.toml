@@ -7,10 +7,11 @@ version = "0.1.0"
 DiscreteValueIteration = "4b033969-44f6-5439-a48b-c11fa3648068"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MarkovGames = "d061fddc-c47a-4172-865e-fdb23de1c5fa"
+OhMyThreads = "67456a42-1dca-4109-a031-0a68de7e3ad5"
 POMDPTools = "7588e00f-9cae-40de-98dc-e0c70c48cdd7"
 POMDPs = "a93abf59-7444-517b-a68a-c42f96afdd7d"
 ProgressMeter = "92933f4c-e287-5a05-a399-4b506db050ca"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 
 [compat]
-MarkovGames = "0.1.0"
+OhMyThreads = "0.8.3"

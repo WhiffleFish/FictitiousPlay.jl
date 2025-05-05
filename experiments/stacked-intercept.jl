@@ -18,9 +18,15 @@ end
 
 game = StackedInterceptMG()
 sol = FictitiousPlaySolver(
-    verbose=true, 
-    iter=20, 
-    vi_solver = SparseValueIterationSolver(max_iterations=1000, belres=1e-3, verbose=true)
+    verbose     = true, 
+    iter        = 20, 
+    threaded    = true,
+    vi_solver = SparseValueIterationSolver(
+        max_iterations  = 1000, 
+        belres          = 1e-3, 
+        verbose         = true
+    )
+    
 )
 pol = solve(sol, game)
 FictitiousPlay.clean_policy!(pol)
